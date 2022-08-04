@@ -10,32 +10,69 @@ public class EffectorManager : MonoBehaviour
     public Vector2 cursorSpot;
 
     GameObject effectorHovered = null;
-    GameObject effectorSelected = null;
+    GameObject effectorToMoveSelected = null;
+    CircleShape effectorToResizeSelected = null;
+
+    public float boundX;
+    public float boundY;
+
+    bool toMove = false;
+    bool toResize = false;
+
+    float initialRadius = 1f;
+    float lastMouseMagnitude = 0f;
+    float zIndex;
 
     void Update()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit2D hitInformation = Physics2D.GetRayIntersection(ray, 10);
+        RaycastHit2D hitInformation = Physics2D.GetRayIntersection(ray, 100);
 
         if (Input.GetMouseButtonDown(0))
         {
-            if (effectorSelected == null)
+            if (effectorHovered == null) return;
+
+            if (effectorToMoveSelected == null)
             {
-                effectorSelected = effectorHovered;
+                if (toMove)
+                {
+                    effectorToMoveSelected = effectorHovered;
+                }
+                if (toResize)
+                {
+                    effectorToResizeSelected = effectorHovered.GetComponent<CircleShape>();
+                }
             }
         }
 
         if (Input.GetMouseButtonUp(0))
         {
-            if (effectorSelected != null)
+            if (effectorToMoveSelected != null)
             {
-                effectorSelected = null;
+                effectorToMoveSelected = null;
+            }
+            if (effectorToResizeSelected != null)
+            {
+                effectorToResizeSelected = null;
             }
         }
 
-        if (effectorSelected != null)
+
+        if (effectorToMoveSelected != null)
         {
-            effectorSelected.transform.position = hitInformation.point;
+            zIndex = effectorToMoveSelected.transform.position.z;
+            if (Mathf.Abs(hitInformation.point.x) > boundX) return;
+            if (Mathf.Abs(hitInformation.point.y) > boundY) return;
+            effectorToMoveSelected.transform.position = (Vector3)hitInformation.point + new Vector3(0,0,zIndex);
+        }
+
+        if (effectorToResizeSelected != null)
+        {
+            if (hitInformation.point.magnitude != 0) lastMouseMagnitude = ((Vector2)effectorToResizeSelected.transform.position - hitInformation.point).magnitude;
+
+            Debug.Log(((Vector2)effectorToResizeSelected.transform.position - hitInformation.point).magnitude);
+            float multiplier = lastMouseMagnitude;
+            effectorToResizeSelected.Radius = initialRadius * multiplier;
         }
 
         if (hitInformation.collider == null)
@@ -47,17 +84,23 @@ public class EffectorManager : MonoBehaviour
 
             if (hitInformation.collider.tag == "Effector")
             {
+                toMove = true;
+                toResize = false;
                 Cursor.SetCursor(cursorMove, cursorSpot, CursorMode.Auto);
                 return;
             }
 
             if (hitInformation.collider.tag == "EffectorExterior")
             {
-            effectorHovered = hitInformation.collider.gameObject;
-            Cursor.SetCursor(cursorResize, cursorSpot, CursorMode.Auto);
+                toMove = false;
+                toResize = true;
+                effectorHovered = hitInformation.collider.gameObject;
+                Cursor.SetCursor(cursorResize, cursorSpot, CursorMode.Auto);
                 return;
             }
 
+        toMove = false;
+        toResize = false;
         effectorHovered = null;
         Cursor.SetCursor(null, cursorSpot, CursorMode.Auto);
     }

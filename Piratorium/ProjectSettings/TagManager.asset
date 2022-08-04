@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Effector
   - EffectorExterior
+  - Quad
   layers:
   - Default
   - TransparentFX

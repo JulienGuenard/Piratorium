@@ -17,6 +17,11 @@ public class AudioManager : MonoBehaviour
 
     void Update()
     {
-                
+        for (int i = 0; i < audioSourceArray.Length; i++)
+        {
+            if (audioSourceArray[i].volume < 0.9f) return;
+        }
+
+        GameManager.instance.Win();
     }
 }

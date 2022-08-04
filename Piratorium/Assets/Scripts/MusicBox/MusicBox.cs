@@ -39,6 +39,9 @@ public class MusicBox : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        audioS.volume += volumeUpSpeed;
+        if (collision.tag == "Quad")
+        {
+            audioS.volume += volumeUpSpeed;
+        }
     }
 }

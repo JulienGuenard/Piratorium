@@ -33,9 +33,13 @@ public class ParticleGenerator : MonoBehaviour
     void CreateQuad()
     {
         randomCircle = Random.insideUnitCircle;
+
         Vector2 pos = transform.position;
+
         pos += randomCircle * particleCircleMultiplier;
+
         GameObject obj = Instantiate(quad, pos, Quaternion.identity);
+
         obj.transform.RotateAround(transform.position, transform.forward, particleDirection);
         Quad objQuad = obj.GetComponent<Quad>();
         objQuad.SetDestroyTime(particleDestroyTime);
