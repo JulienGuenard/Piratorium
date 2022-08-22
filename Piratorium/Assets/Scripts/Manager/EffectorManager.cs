@@ -20,7 +20,7 @@ public class EffectorManager : MonoBehaviour
     bool toResize = false;
 
     float initialRadius = 1f;
-    float lastMouseMagnitude = 0f;
+    float lastMouseMagnitude = 2.3f;
     float zIndex;
 
     void Update()
@@ -68,7 +68,8 @@ public class EffectorManager : MonoBehaviour
 
         if (effectorToResizeSelected != null)
         {
-            if (hitInformation.point.magnitude != 0) lastMouseMagnitude = ((Vector2)effectorToResizeSelected.transform.position - hitInformation.point).magnitude;
+            float magnitude = ((Vector2)effectorToResizeSelected.transform.position - hitInformation.point).magnitude;
+            if (magnitude > 2.3f) lastMouseMagnitude = magnitude;
 
             Debug.Log(((Vector2)effectorToResizeSelected.transform.position - hitInformation.point).magnitude);
             float multiplier = lastMouseMagnitude;

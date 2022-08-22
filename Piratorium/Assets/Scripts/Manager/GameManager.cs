@@ -16,6 +16,14 @@ public class GameManager : MonoBehaviour
         if (instance == null) instance = this;
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            Reset();
+        }
+    }
+
     public void Win()
     {
         if (winCanvas.activeInHierarchy) return;
@@ -28,5 +36,10 @@ public class GameManager : MonoBehaviour
     {
         yield return new WaitForSeconds(4f);
         SceneManager.LoadScene(nextLevel);
+    }
+
+    private void Reset()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }
